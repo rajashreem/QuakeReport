@@ -34,7 +34,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+        final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
 
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
@@ -45,7 +45,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Uri webpage = Uri.parse("http://www.google.com");
+                Uri webpage = Uri.parse(earthquakes.get(position).getUrl());
                 Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
