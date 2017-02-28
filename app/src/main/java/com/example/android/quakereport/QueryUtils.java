@@ -32,7 +32,7 @@ public class QueryUtils {
             for(int i = 0; i < earthquakeList.length(); i++){
                 JSONObject properties = earthquakeList.getJSONObject(i).getJSONObject("properties");
 
-                String magnitude = properties.getString("mag");
+                double magnitude = properties.getDouble("mag");
                 String place = properties.getString("place");
                 long time = properties.getLong("time");
 

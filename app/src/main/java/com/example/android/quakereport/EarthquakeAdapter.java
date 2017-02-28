@@ -38,7 +38,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
     private void setMagnitude(View rootView, Earthquake earthquake) {
         TextView magnitude = (TextView) rootView.findViewById(R.id.magnitude);
-        magnitude.setText(earthquake.getMagnitude());
+        magnitude.setText(String.valueOf(earthquake.getMagnitude()));
     }
 
     private void setLocation(View rootView, Earthquake earthquake) {
