@@ -19,7 +19,7 @@ public class Earthquake {
         return mLocation;
     }
 
-    public long getDate() {
+    public long getTime() {
         return mTime;
     }
 }
