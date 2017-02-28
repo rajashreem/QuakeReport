@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
+public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
+    final String LOCATION_SEPARATOR = " of ";
+
     public EarthquakeAdapter(Context context, List<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
     }
@@ -21,7 +23,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rootView = convertView;
-        if(rootView == null){
+        if (rootView == null) {
             rootView = LayoutInflater.from(getContext()).inflate(R.layout.single_earthquake_report, parent, false);
         }
 
@@ -40,8 +42,24 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
     }
 
     private void setLocation(View rootView, Earthquake earthquake) {
-        TextView location = (TextView) rootView.findViewById(R.id.location);
-        location.setText(earthquake.getLocation());
+        String locationOffset, primaryLocation;
+
+        String originalLocation = earthquake.getLocation();
+
+        if (originalLocation.contains(LOCATION_SEPARATOR)) {
+            String[] dividedLocations = originalLocation.split(LOCATION_SEPARATOR);
+            locationOffset = dividedLocations[0] + LOCATION_SEPARATOR;
+            primaryLocation = dividedLocations[1];
+        } else {
+            locationOffset = "Near the";
+            primaryLocation = originalLocation;
+        }
+
+        TextView offsetLocationText = (TextView) rootView.findViewById(R.id.location_offset);
+        offsetLocationText.setText(locationOffset);
+
+        TextView primaryLocationText = (TextView) rootView.findViewById(R.id.primary_location);
+        primaryLocationText.setText(primaryLocation);
     }
 
     private void setDateAndTime(View rootView, Earthquake earthquake) {
