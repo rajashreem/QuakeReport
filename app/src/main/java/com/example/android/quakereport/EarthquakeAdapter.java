@@ -27,12 +27,24 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
 
         Earthquake earthquake = getItem(position);
 
+        setMagnitude(rootView, earthquake);
+        setLocation(rootView, earthquake);
+        setDateAndTime(rootView, earthquake);
+
+        return rootView;
+    }
+
+    private void setMagnitude(View rootView, Earthquake earthquake) {
         TextView magnitude = (TextView) rootView.findViewById(R.id.magnitude);
         magnitude.setText(earthquake.getMagnitude());
+    }
 
+    private void setLocation(View rootView, Earthquake earthquake) {
         TextView location = (TextView) rootView.findViewById(R.id.location);
         location.setText(earthquake.getLocation());
+    }
 
+    private void setDateAndTime(View rootView, Earthquake earthquake) {
         Date date = new Date(earthquake.getTime());
 
         String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(date);
@@ -42,7 +54,5 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
         String formattedTime = new SimpleDateFormat("h:mm a").format(date);
         TextView timeText = (TextView) rootView.findViewById(R.id.time);
         timeText.setText(formattedTime);
-
-        return rootView;
     }
 }
