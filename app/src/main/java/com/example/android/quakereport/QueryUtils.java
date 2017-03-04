@@ -16,17 +16,15 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class QueryUtils {
-    private static final String URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=5&limit=10";
-
     private QueryUtils() {
     }
 
-    public static ArrayList<Earthquake> extractEarthquakes() throws IOException {
+    public static ArrayList<Earthquake> extractEarthquakes(String url) throws IOException {
         ArrayList<Earthquake> earthquakes;
 
         String jsonResponse = "";
 
-        jsonResponse = makeHttpRequest(URL);
+        jsonResponse = makeHttpRequest(url);
         earthquakes = extractEarthquakesFromJsonResponse(jsonResponse);
 
         return earthquakes;
