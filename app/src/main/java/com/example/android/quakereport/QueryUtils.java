@@ -1,5 +1,7 @@
 package com.example.android.quakereport;
 
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,80 +15,106 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 public class QueryUtils {
     private QueryUtils() {
     }
 
-    public static ArrayList<Earthquake> extractEarthquakes(String url) throws IOException {
-        ArrayList<Earthquake> earthquakes;
-
+    public static List<Earthquake> extractEarthquakes(String urlString) {
         String jsonResponse = "";
 
-        jsonResponse = makeHttpRequest(url);
-        earthquakes = extractEarthquakesFromJsonResponse(jsonResponse);
+        URL url = createUrl(urlString);
 
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e("QueryUtils", "Error with making http connection", e);
+        }
+
+        List<Earthquake> earthquakes = extractEarthquakesFromJsonResponse(jsonResponse);
         return earthquakes;
     }
 
-    private static String makeHttpRequest(String urlString) throws IOException {
-        String jsonResponse = "";
-        HttpURLConnection connection = null;
-        InputStream response = null;
+    @Nullable
+    private static URL createUrl(String urlString) {
         URL url = null;
-
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Log.e("QueryUtils", "Problem building the url", e);
         }
+        return url;
+    }
+
+    private static String makeHttpRequest(URL url) throws IOException {
+        String jsonResponse = "";
+
+        if(url == null){
+            return jsonResponse;
+        }
+
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
 
         try {
             connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(1000);
-            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
             connection.setRequestMethod("GET");
 
             connection.connect();
 
-            response = connection.getInputStream();
-            jsonResponse = getJsonReponse(response);
+            if(connection.getResponseCode() == 200){
+                inputStream = connection.getInputStream();
+                jsonResponse = readFromStream(inputStream);
+            }
+            else{
+                Log.e("QueryUtils", "Error response code: " + connection.getResponseCode());
+            }
+
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("QueryUtils", "Problem retrieving the earthquake json results", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
 
-            if(response != null){
-                response.close();
+            if(inputStream != null){
+                inputStream.close();
             }
         }
 
         return jsonResponse;
     }
 
-    private static String getJsonReponse(InputStream response) {
-        InputStreamReader inputStreamReader = new InputStreamReader(response);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        StringBuilder builder = new StringBuilder();
-        try {
+    private static String readFromStream(InputStream inputStream) throws IOException {
+        StringBuilder output = new StringBuilder();
+
+        if(inputStream != null){
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
             String line = bufferedReader.readLine();
             while (line != null) {
-                builder.append(line);
+                output.append(line);
                 line = bufferedReader.readLine();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return builder.toString();
+
+        return output.toString();
     }
 
 
-    private static ArrayList<Earthquake> extractEarthquakesFromJsonResponse(String jsonResponse) {
-        ArrayList<Earthquake> earthquakes = new ArrayList<>();
+    private static List<Earthquake> extractEarthquakesFromJsonResponse(String jsonResponse) {
+        List<Earthquake> earthquakes = new ArrayList<>();
+
+        if(TextUtils.isEmpty(jsonResponse)){
+            return earthquakes;
+        }
 
         try {
             JSONObject rootResponse = new JSONObject(jsonResponse);

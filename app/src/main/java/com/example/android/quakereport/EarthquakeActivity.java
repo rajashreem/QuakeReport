@@ -24,7 +24,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,56 +32,51 @@ public class EarthquakeActivity extends AppCompatActivity {
             "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
+    private EarthquakeAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
+        earthquakeListView.setAdapter(mAdapter);
+
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Earthquake currentEarthquake = mAdapter.getItem(position);
+                Uri webpage = Uri.parse(currentEarthquake.getUrl());
+                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
+
         EarthquakeAsyncTask earthquakeAsyncTask = new EarthquakeAsyncTask();
-        earthquakeAsyncTask.execute();
+        earthquakeAsyncTask.execute(USGS_REQUEST_URL);
     }
 
     private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>>{
         @Override
         protected List<Earthquake> doInBackground(String... urls) {
-            ArrayList<Earthquake> earthquakes = new ArrayList<>();
-
             if(urls.length < 1 || urls[0] == null){
-                return earthquakes;
+                return null;
             }
 
-            try {
-                earthquakes = QueryUtils.extractEarthquakes(urls[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            List<Earthquake> earthquakes = QueryUtils.extractEarthquakes(urls[0]);
             return earthquakes;
         }
 
         @Override
-        protected void onPostExecute(final List<Earthquake> earthquakes) {
-            if(earthquakes.isEmpty()){
-                return;
+        protected void onPostExecute(List<Earthquake> earthquakes) {
+            mAdapter.clear();
+
+            if(earthquakes!= null && !earthquakes.isEmpty()){
+                mAdapter.addAll(earthquakes);
             }
-
-            ListView earthquakeListView = (ListView) findViewById(R.id.list);
-
-            EarthquakeAdapter adapter = new EarthquakeAdapter(EarthquakeActivity.this, earthquakes);
-
-            earthquakeListView.setAdapter(adapter);
-
-            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    Uri webpage = Uri.parse(earthquakes.get(position).getUrl());
-                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        startActivity(intent);
-                    }
-                }
-            });
-
         }
     }
 }
