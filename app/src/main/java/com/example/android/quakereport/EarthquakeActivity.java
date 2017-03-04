@@ -17,6 +17,7 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
@@ -34,23 +36,36 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+        EarthquakeAsyncTask earthquakeAsyncTask = new EarthquakeAsyncTask();
+        earthquakeAsyncTask.execute();
+    }
 
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+    private class EarthquakeAsyncTask extends AsyncTask<Void, Void, List<Earthquake>>{
+        @Override
+        protected List<Earthquake> doInBackground(Void... voids) {
+            ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+            return earthquakes;
+        }
 
-        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
+        @Override
+        protected void onPostExecute(final List<Earthquake> earthquakes) {
+            ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
-        earthquakeListView.setAdapter(adapter);
+            EarthquakeAdapter adapter = new EarthquakeAdapter(EarthquakeActivity.this, earthquakes);
 
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Uri webpage = Uri.parse(earthquakes.get(position).getUrl());
-                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
+            earthquakeListView.setAdapter(adapter);
+
+            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Uri webpage = Uri.parse(earthquakes.get(position).getUrl());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+
+        }
     }
 }
