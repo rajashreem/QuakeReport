@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,12 @@ public class EarthquakeActivity extends AppCompatActivity {
     private class EarthquakeAsyncTask extends AsyncTask<Void, Void, List<Earthquake>>{
         @Override
         protected List<Earthquake> doInBackground(Void... voids) {
-            ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+            ArrayList<Earthquake> earthquakes = null;
+            try {
+                earthquakes = QueryUtils.extractEarthquakes();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return earthquakes;
         }
 
