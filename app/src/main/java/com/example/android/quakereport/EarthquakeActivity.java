@@ -16,8 +16,11 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -67,7 +70,16 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_text_view);
         earthquakeListView.setEmptyView(mEmptyStateTextView);
 
-        getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+
+        if (isConnected) {
+            getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
+        }
     }
 
     @Override
@@ -81,7 +93,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
         mProgressBar.setVisibility(View.GONE);
 
-        if(earthquakes!= null && !earthquakes.isEmpty()) {
+        if (earthquakes != null && !earthquakes.isEmpty()) {
             mAdapter.addAll(earthquakes);
         }
 
