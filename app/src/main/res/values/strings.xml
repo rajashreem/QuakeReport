@@ -17,7 +17,18 @@
     <string name="app_name">Quake Report</string>
     <string name="no_results">No earthquakes found</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="settings_min_magnitude_key">min_magnitude</string>
-    <string name="settings_min_magnitude_default_value">6</string>
+
+    <string name="settings_min_magnitude_key" translatable="false">min_magnitude</string>
+    <string name="settings_min_magnitude_default_value" translatable="false">6</string>
     <string name="settings_min_magnitude_title">Minimum Magnitude</string>
+
+    <string name="settings_order_by_title">Order earthquakes by</string>
+    <string name="settings_order_by_key" translatable="false">order_by</string>
+    <string name="settings_order_by_default_value" translatable="false">@string/value_order_by_magnitude</string>
+
+    <string name="entry_order_by_magnitude" translatable="false">Magnitude</string>
+    <string name="value_order_by_magnitude" translatable="false">magnitude</string>
+
+    <string name="entry_order_by_time" translatable="false">Time</string>
+    <string name="value_order_by_time" translatable="false">time</string>
 </resources>

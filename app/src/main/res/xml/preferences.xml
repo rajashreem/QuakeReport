@@ -7,4 +7,12 @@
         android:inputType="numberDecimal"
         android:selectAllOnFocus="true">
     </EditTextPreference>
+
+    <ListPreference
+        android:key="@string/settings_order_by_key"
+        android:defaultValue="@string/settings_order_by_default_value"
+        android:title="@string/settings_order_by_title"
+        android:entries="@array/order_by_entries"
+        android:entryValues="@array/order_by_entry_values">
+    </ListPreference>
 </PreferenceScreen>
