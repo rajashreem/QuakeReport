@@ -17,4 +17,7 @@
     <string name="app_name">Quake Report</string>
     <string name="no_results">No earthquakes found</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="settings_min_magnitude_key">min_magnitude</string>
+    <string name="settings_min_magnitude_default_value">6</string>
+    <string name="settings_min_magnitude_title">Minimum Magnitude</string>
 </resources>

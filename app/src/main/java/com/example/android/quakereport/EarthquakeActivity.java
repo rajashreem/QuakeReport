@@ -105,7 +105,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String minMagnitudeValue = sharedPreferences.getString("min_magnitude", "6");
+        String minMagnitudeValue = sharedPreferences.getString(getString(R.string.settings_min_magnitude_key),
+                getString(R.string.settings_min_magnitude_default_value));
 
         Uri baseUri = Uri.parse(USGS_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
