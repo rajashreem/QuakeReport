@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <EditTextPreference
+        android:key="min_magnitude"
+        android:defaultValue="6"
+        android:title="Minimum Magnitude"
+        android:summary="Current value : 6"
+        android:inputType="numberDecimal"
+        android:selectAllOnFocus="true">
+    </EditTextPreference>
 </PreferenceScreen>
