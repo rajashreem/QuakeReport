@@ -108,8 +108,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         String minMagnitudeValue = sharedPreferences.getString(getString(R.string.settings_min_magnitude_key),
                 getString(R.string.settings_min_magnitude_default_value));
 
-        String orderByValue = sharedPreferences.getString(getString(R.string.settings_order_by_key),
-                getString(R.string.settings_min_magnitude_default_value));
+        String orderByValue = sharedPreferences.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_order_by_default_value));
 
         Uri baseUri = Uri.parse(USGS_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
